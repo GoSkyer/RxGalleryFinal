@@ -33,11 +33,7 @@ import cn.finalteam.rxgalleryfinal.rxbus.event.MediaViewPagerChangedEvent;
 import cn.finalteam.rxgalleryfinal.rxbus.event.OpenMediaPageFragmentEvent;
 import cn.finalteam.rxgalleryfinal.rxbus.event.OpenMediaPreviewFragmentEvent;
 import cn.finalteam.rxgalleryfinal.rxbus.event.RequestStorageReadAccessPermissionEvent;
-<<<<<<< HEAD
-import cn.finalteam.rxgalleryfinal.rxbus.event.OpenMediaPageFragmentEvent;
 import cn.finalteam.rxgalleryfinal.rxjob.RxJob;
-=======
->>>>>>> 81d13cbdbaa10b56a634d3f626ae032551425a19
 import cn.finalteam.rxgalleryfinal.ui.fragment.MediaGridFragment;
 import cn.finalteam.rxgalleryfinal.ui.fragment.MediaPageFragment;
 import cn.finalteam.rxgalleryfinal.ui.fragment.MediaPreviewFragment;
@@ -368,17 +364,13 @@ public class MediaActivity extends BaseActivity implements ActivityFragmentView 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-<<<<<<< HEAD
-        RxBus.getDefault().removeAllStickyEvents();
-        RxBus.getDefault().clear();
         RxJob.getDefault().clearJob();
-=======
         subscriptionOpenMediaPreviewEvent.unsubscribe();
         subscriptionMediaCheckChangeEvent.unsubscribe();
         subscriptionMediaViewPagerChangedEvent.unsubscribe();
         subscriptionCloseRxMediaGridPageEvent.unsubscribe();
         subscriptionOpenMediaPageFragmentEvent.unsubscribe();
->>>>>>> 81d13cbdbaa10b56a634d3f626ae032551425a19
+
     }
 
     private StateListDrawable createDefaultOverButtonBgDrawable() {
