@@ -30,10 +30,14 @@ import cn.finalteam.rxgalleryfinal.rxbus.event.CloseRxMediaGridPageEvent;
 import cn.finalteam.rxgalleryfinal.rxbus.event.ImageMultipleResultEvent;
 import cn.finalteam.rxgalleryfinal.rxbus.event.MediaCheckChangeEvent;
 import cn.finalteam.rxgalleryfinal.rxbus.event.MediaViewPagerChangedEvent;
+import cn.finalteam.rxgalleryfinal.rxbus.event.OpenMediaPageFragmentEvent;
 import cn.finalteam.rxgalleryfinal.rxbus.event.OpenMediaPreviewFragmentEvent;
 import cn.finalteam.rxgalleryfinal.rxbus.event.RequestStorageReadAccessPermissionEvent;
+<<<<<<< HEAD
 import cn.finalteam.rxgalleryfinal.rxbus.event.OpenMediaPageFragmentEvent;
 import cn.finalteam.rxgalleryfinal.rxjob.RxJob;
+=======
+>>>>>>> 81d13cbdbaa10b56a634d3f626ae032551425a19
 import cn.finalteam.rxgalleryfinal.ui.fragment.MediaGridFragment;
 import cn.finalteam.rxgalleryfinal.ui.fragment.MediaPageFragment;
 import cn.finalteam.rxgalleryfinal.ui.fragment.MediaPreviewFragment;
@@ -72,6 +76,12 @@ public class MediaActivity extends BaseActivity implements ActivityFragmentView 
     private ArrayList<MediaBean> mPageMediaList;
     private int mPagePosition;
     private int mPreviewPosition;
+
+    private Subscription subscriptionOpenMediaPreviewEvent;
+    private Subscription subscriptionMediaCheckChangeEvent;
+    private Subscription subscriptionMediaViewPagerChangedEvent;
+    private Subscription subscriptionCloseRxMediaGridPageEvent;
+    private Subscription subscriptionOpenMediaPageFragmentEvent;
 
     @Override
     public int getContentView() {
@@ -263,7 +273,7 @@ public class MediaActivity extends BaseActivity implements ActivityFragmentView 
     }
 
     private void subscribeEvent() {
-        Subscription subscriptionOpenMediaPreviewEvent = RxBus.getDefault().toObservable(OpenMediaPreviewFragmentEvent.class)
+        subscriptionOpenMediaPreviewEvent = RxBus.getDefault().register(OpenMediaPreviewFragmentEvent.class)
                 .map(mediaPreviewEvent -> mediaPreviewEvent)
                 .subscribe(new RxBusSubscriber<OpenMediaPreviewFragmentEvent>() {
                     @Override
@@ -273,9 +283,7 @@ public class MediaActivity extends BaseActivity implements ActivityFragmentView 
                     }
                 });
 
-        RxBus.getDefault().add(subscriptionOpenMediaPreviewEvent);
-
-        Subscription subscriptionMediaCheckChangeEvent = RxBus.getDefault().toObservable(MediaCheckChangeEvent.class)
+        subscriptionMediaCheckChangeEvent = RxBus.getDefault().register(MediaCheckChangeEvent.class)
                 .map(mediaCheckChangeEvent -> mediaCheckChangeEvent)
                 .subscribe(new RxBusSubscriber<MediaCheckChangeEvent>() {
                     @Override
@@ -297,9 +305,8 @@ public class MediaActivity extends BaseActivity implements ActivityFragmentView 
                         }
                     }
                 });
-        RxBus.getDefault().add(subscriptionMediaCheckChangeEvent);
 
-        Subscription subscriptionMediaViewPagerChangedEvent = RxBus.getDefault().toObservable(MediaViewPagerChangedEvent.class)
+        subscriptionMediaViewPagerChangedEvent = RxBus.getDefault().register(MediaViewPagerChangedEvent.class)
                 .map(mediaViewPagerChangedEvent -> mediaViewPagerChangedEvent)
                 .subscribe(new RxBusSubscriber<MediaViewPagerChangedEvent>() {
                     @Override
@@ -315,18 +322,16 @@ public class MediaActivity extends BaseActivity implements ActivityFragmentView 
                         mTvToolbarTitle.setText(title);
                     }
                 });
-        RxBus.getDefault().add(subscriptionMediaViewPagerChangedEvent);
 
-        Subscription subscriptionCloseRxMediaGridPageEvent = RxBus.getDefault().toObservable(CloseRxMediaGridPageEvent.class)
+        subscriptionCloseRxMediaGridPageEvent = RxBus.getDefault().register(CloseRxMediaGridPageEvent.class)
                 .subscribe(new RxBusSubscriber<CloseRxMediaGridPageEvent>() {
                     @Override
                     protected void onEvent(CloseRxMediaGridPageEvent closeRxMediaGridPageEvent) throws Exception {
                         finish();
                     }
                 });
-        RxBus.getDefault().add(subscriptionCloseRxMediaGridPageEvent);
 
-        Subscription subscriptionOpenMediaPageFragmentEvent = RxBus.getDefault().toObservable(OpenMediaPageFragmentEvent.class)
+        subscriptionOpenMediaPageFragmentEvent = RxBus.getDefault().register(OpenMediaPageFragmentEvent.class)
                 .subscribe(new RxBusSubscriber<OpenMediaPageFragmentEvent>() {
                     @Override
                     protected void onEvent(OpenMediaPageFragmentEvent openMediaPageFragmentEvent) {
@@ -336,7 +341,6 @@ public class MediaActivity extends BaseActivity implements ActivityFragmentView 
                         showMediaPageFragment(mPageMediaList, mPagePosition);
                     }
                 });
-        RxBus.getDefault().add(subscriptionOpenMediaPageFragmentEvent);
     }
 
     public List<MediaBean> getCheckedList() {
@@ -364,9 +368,17 @@ public class MediaActivity extends BaseActivity implements ActivityFragmentView 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+<<<<<<< HEAD
         RxBus.getDefault().removeAllStickyEvents();
         RxBus.getDefault().clear();
         RxJob.getDefault().clearJob();
+=======
+        subscriptionOpenMediaPreviewEvent.unsubscribe();
+        subscriptionMediaCheckChangeEvent.unsubscribe();
+        subscriptionMediaViewPagerChangedEvent.unsubscribe();
+        subscriptionCloseRxMediaGridPageEvent.unsubscribe();
+        subscriptionOpenMediaPageFragmentEvent.unsubscribe();
+>>>>>>> 81d13cbdbaa10b56a634d3f626ae032551425a19
     }
 
     private StateListDrawable createDefaultOverButtonBgDrawable() {

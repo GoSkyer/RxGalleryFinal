@@ -15,17 +15,13 @@ import java.util.List;
 
 import cn.finalteam.rxgalleryfinal.bean.MediaBean;
 import cn.finalteam.rxgalleryfinal.imageloader.AbsImageLoader;
-import cn.finalteam.rxgalleryfinal.imageloader.FrescoImageLoader;
-import cn.finalteam.rxgalleryfinal.imageloader.GlideImageLoader;
-import cn.finalteam.rxgalleryfinal.imageloader.PicassoImageLoader;
-import cn.finalteam.rxgalleryfinal.imageloader.UniversalImageLoader;
 
 /**
  * Desction:配置信息
  * Author:pengjianbo
  * Date:16/5/7 下午3:58
  */
-public class Configuration implements Parcelable{
+public class Configuration implements Parcelable {
 
     protected Configuration() {
     }
@@ -37,7 +33,7 @@ public class Configuration implements Parcelable{
     private boolean crop;
     private int maxSize = 1;
 
-    private int imageLoaderType;
+    private Class<? extends AbsImageLoader> imageLoaderType;
     private int imageConfig;
     private boolean hideCamera;
 
@@ -47,7 +43,7 @@ public class Configuration implements Parcelable{
     //图片压缩质量,默认不压缩
     private int compressionQuality = 90;
     //手势方式,默认all
-    private int []gestures;
+    private int[] gestures;
     //设置图片最大值,默认根据屏幕得出
     private int maxBitmapSize = CropImageView.DEFAULT_MAX_BITMAP_SIZE;
     //设置最大缩放值,默认10.f
@@ -58,7 +54,7 @@ public class Configuration implements Parcelable{
     //等比缩放默认值索引,默认原图比例
     private int selectedByDefault;
     //等比缩放值表,默认1:1,3:4,原图比例,3:2,16:9
-    private AspectRatio []aspectRatio;
+    private AspectRatio[] aspectRatio;
     //是否允许改变裁剪大小
     private boolean freestyleCropEnabled = OverlayView.DEFAULT_FREESTYLE_CROP_ENABLED;
     //是否显示裁剪框半透明椭圆浮层
@@ -87,7 +83,7 @@ public class Configuration implements Parcelable{
         ovalDimmedLayer = in.readByte() != 0;
         maxResultWidth = in.readInt();
         maxResultHeight = in.readInt();
-        imageLoaderType = in.readInt();
+        imageLoaderType = (Class<? extends AbsImageLoader>) in.readSerializable();
         imageConfig = in.readInt();
         hideCamera = in.readByte() != 0;
     }
@@ -144,42 +140,39 @@ public class Configuration implements Parcelable{
         this.maxSize = maxSize;
     }
 
+
     public boolean isHideCamera() {
         return hideCamera;
     }
 
     public void setHideCamera(boolean hideCamera) {
         this.hideCamera = hideCamera;
+
+    }
+
+    public Class<? extends AbsImageLoader> getImageLoaderType() {
+        return imageLoaderType;
     }
 
     public AbsImageLoader getImageLoader() {
+        if (imageLoaderType == null) {
+            return null;
+        }
         AbsImageLoader imageLoader = null;
-        switch (imageLoaderType){
-            case 1:
-                imageLoader = new PicassoImageLoader();
-                break;
-            case 2:
-                imageLoader = new GlideImageLoader();
-                break;
-            case 3:
-                imageLoader = new FrescoImageLoader();
-                break;
-            case 4:
-                imageLoader = new UniversalImageLoader();
-                break;
-            case 5:
-
-                break;
+        try {
+            imageLoader = imageLoaderType.newInstance();
+        } catch (InstantiationException e) {
+        } catch (IllegalAccessException e) {
         }
         return imageLoader;
     }
 
-    protected void setImageLoaderType(int imageLoaderType) {
+    public void setImageLoaderType(Class<? extends AbsImageLoader> imageLoaderType) {
         this.imageLoaderType = imageLoaderType;
     }
 
     public Bitmap.Config getImageConfig() {
-        switch (imageConfig){
+        switch (imageConfig) {
             case 1:
                 return Bitmap.Config.ALPHA_8;
             case 2:
@@ -212,7 +205,7 @@ public class Configuration implements Parcelable{
         this.compressionQuality = compressionQuality;
     }
 
-    public void setAllowedGestures(@UCropActivity.GestureTypes int []gestures) {
+    public void setAllowedGestures(@UCropActivity.GestureTypes int[] gestures) {
         this.gestures = gestures;
     }
 
@@ -335,7 +328,7 @@ public class Configuration implements Parcelable{
         parcel.writeByte((byte) (ovalDimmedLayer ? 1 : 0));
         parcel.writeInt(maxResultWidth);
         parcel.writeInt(maxResultHeight);
-        parcel.writeInt(imageLoaderType);
+        parcel.writeSerializable(imageLoaderType);
         parcel.writeInt(imageConfig);
         parcel.writeByte((byte) (hideCamera ? 1 : 0));
     }
